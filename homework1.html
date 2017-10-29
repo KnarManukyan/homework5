@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<canvas id="canvas" width="500" height="500"></canvas>
+<script>
+    const canvas = document.getElementById("canvas");
+    const context = canvas.getContext("2d");
+    const rand = function(num) {
+            return Math.floor(Math.random() * num) + 1;
+            }
+    
+    const rect = [];            
+    const forEach = function(arr, func) {
+        const helper = function(index) {
+                if(index === arr.length)
+                    return;
+                func(arr[index]);   
+                helper(index+1);    
+                }
+        helper(0);
+            }
+    const createPoints = function(count, canvasWidth, canvasHeight) {
+    if(count===0){
+        return;
+    }
+    const colorArray = ["lightpink","coral","blueviolet", "RoyalBlue", "PaleVioletRed"];
+        rect.push({
+            width: 50,
+            height: 50,
+            x: rand(canvasWidth - 50),
+            y: rand(canvasHeight - 50),
+            xDelta: 1,
+            yDelta: 1, 
+            color: colorArray[rand(5)-1] 
+        })
+    createPoints(count-1, canvasWidth, canvasHeight)
+    return rect;
+    }
+
+    createPoints(10,canvas.width,canvas.height);
+
+</script>
+</head>
+<body>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+<canvas id="canvas" width="1000" height="500"></canvas>
+<script>
+	const canvas = document.getElementById("canvas");
+	const context = canvas.getContext("2d");
+
+	const image = new Image();
+	image.src = "https://lh3.googleusercontent.com/aRxSyx1QeBrst2ZvA4M7r2MvC3jEcBi-FLkB4MkByBnLonJkE4bLV5kQq5bKBrcvCzgj=h900";
+
+	const heroimg = new Image();
+	heroimg.src = "http://i64.tinypic.com/2njgjfk.png";
+
+	const heroimgflipped = new Image();
+	heroimgflipped.src = "http://i66.tinypic.com/2vb7cev.png";
+
+	const badGuysimg = new Image();
+	badGuysimg.src = "https://orig00.deviantart.net/5b02/f/2016/360/9/5/angry_rock_clipart_by_matiseli-dasxgjv.png";
+
+
+	const floorY = canvas.height -  190;
+
+	const gameData = {
+		hero: {
+			x: 0,
+			y: floorY,
+			img: heroimg,
+			width: 100,
+			height: 150,
+			xDelta: 10,
+			yDelta: 100
+		},
+		badGuys: []
+     	}
+
+    const badGuys = gameData.badGuys;
+    const hero = gameData.hero;
+
+    const rand = function(num) {
+			return Math.floor(Math.random() * num) + 1;
+			}
+
+	const forEach = function(arr, func) {
+		const helper = function(index) {
+        	if(index === arr.length){
+         	    return;
+        	}
+        	func(arr[index]);   
+        	helper(index+1);    
+        	}
+        helper(0);
+    	}
+
+    const draw = function() {
+    	context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    	context.drawImage(hero.img, hero.x, hero.y, hero.width, hero.height);
+    	forEach(badGuys,function(badGuys){
+    		context.drawImage(badGuys.img, badGuys.x, badGuys.y, badGuys.width, badGuys.height)
+    		});
+    	};
+
+    const leftKey = 37;
+	const upKey = 38;
+	const rightKey = 39;
+	const downKey = 40;
+	document.addEventListener('keydown', function(event) {
+		if(event.keyCode === leftKey) {
+      		hero.x -= hero.xDelta;
+      		hero.img = heroimgflipped;
+   	    	if (hero.x <= 0){
+      			hero.x=canvas.width-hero.width;
+      		} 
+
+  		} else if(event.keyCode === rightKey) {
+  	    	hero.x += hero.xDelta;
+  	    	hero.img = heroimg;
+      		if (hero.x >= canvas.width){
+      			hero.x= (-hero.width);
+      	}
+      }
+      	else if (event.keyCode === upKey) {
+      			hero.y -= hero.yDelta;
+                  if(hero.img === heroimgflipped) {
+                  hero.x -= 200;
+                } else if(hero.img === heroimg) {
+                  hero.x += 200;
+              }
+            }
+		}, false);
+
+	const position = [1000];
+
+	const createPositions = function(num){
+		const helper = function(index){
+		if(index >= num){
+			return;
+		}
+		position[position.length]=position[position.length-1]+400;
+		helper (index+1);
+		}
+		helper(1);
+		}
+
+	const createBadguys = function(count, canvasWidth, canvasHeight) {
+		const number = count*4;
+			if(count===0){
+				return;
+			}
+		createPositions(number);
+			badGuys.push({
+				width: 80,
+				height: 80,
+				x: position[rand(number)-1],
+				y: floorY+60,
+				xDelta: 10, 
+				img: badGuysimg
+			});
+		createBadguys(count-1, canvasWidth, canvasHeight)
+		return badGuys;
+		}
+    	createBadguys(5,canvas.width,canvas.height);
+	
+	const updateData = function() {
+
+	    if(hero.y <= floorY) {
+        	hero.y = floorY;
+         }
+
+        forEach(badGuys, function (badGuys) {
+       	badGuys.x -= badGuys.xDelta
+ 		})
+
+        forEach(badGuys,function(badGuys){
+    			if(hero.x+hero.width/2 > badGuys.x && 
+    			   hero.x < badGuys.x+badGuys.width){
+    			alert("Game over!");
+    			}
+    	})
+     }
+
+    const loop = function() {
+    	draw();
+    	updateData();
+    	requestAnimationFrame(loop);
+	 }
+
+	loop();
+</script>
+</head>
+<body>
+</body>
+</html>
